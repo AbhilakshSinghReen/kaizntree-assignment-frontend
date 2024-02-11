@@ -73,6 +73,7 @@ export function App() {
             label: `${item.firstName} ${item.lastName}`,
           })}
           onChange={async (newValue) => {
+            // possible bug: should prevent changing this filter's value is transactions are loading
             if (newValue === null) {
               return
             }
