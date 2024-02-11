@@ -12,22 +12,30 @@ export function App() {
   const { data: employees, ...employeeUtils } = useEmployees()
   const { data: paginatedTransactions, ...paginatedTransactionsUtils } = usePaginatedTransactions()
   const { data: transactionsByEmployee, ...transactionsByEmployeeUtils } = useTransactionsByEmployee()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingEmployees, setIsLoadingEmployees] = useState(false)
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false) // this state value can be removed if required
 
   const transactions = useMemo(
     () => paginatedTransactions?.data ?? transactionsByEmployee ?? null,
     [paginatedTransactions, transactionsByEmployee]
   )
 
-  const loadAllTransactions = useCallback(async () => {
-    setIsLoading(true)
-    transactionsByEmployeeUtils.invalidateData()
+  const loadAllEmployees = useCallback(async () => {
+    setIsLoadingEmployees(true)
 
     await employeeUtils.fetchAll()
+
+    setIsLoadingEmployees(false)
+  }, [employeeUtils])
+
+  const loadAllTransactions = useCallback(async () => {
+    setIsLoadingTransactions(true)
+
+    transactionsByEmployeeUtils.invalidateData()
     await paginatedTransactionsUtils.fetchAll()
 
-    setIsLoading(false)
-  }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
+    setIsLoadingTransactions(false)
+  }, [paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
     async (employeeId: string) => {
@@ -39,6 +47,7 @@ export function App() {
 
   useEffect(() => {
     if (employees === null && !employeeUtils.loading) {
+      loadAllEmployees()
       loadAllTransactions()
     }
   }, [employeeUtils.loading, employees, loadAllTransactions])
@@ -51,7 +60,7 @@ export function App() {
         <hr className="KaizntreeBreak--l" />
 
         <InputSelect<Employee>
-          isLoading={isLoading}
+          isLoading={isLoadingEmployees}
           defaultValue={EMPTY_EMPLOYEE}
           items={employees === null ? [] : [EMPTY_EMPLOYEE, ...employees]}
           label="Filter by employee"
