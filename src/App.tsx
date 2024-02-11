@@ -16,7 +16,10 @@ export function App() {
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false) // this state value can be removed if required
 
   const transactions = useMemo(
-    () => paginatedTransactions?.data ?? transactionsByEmployee ?? null,
+    () => ({
+      data: paginatedTransactions?.data ?? transactionsByEmployee ?? null,
+      nextPageAvailable: paginatedTransactions?.data? paginatedTransactions?.nextPage : null
+    }),
     [paginatedTransactions, transactionsByEmployee]
   )
 
@@ -86,9 +89,9 @@ export function App() {
         <div className="KaizntreeBreak--l" />
 
         <div className="KaizntreeGrid">
-          <Transactions transactions={transactions} />
+          <Transactions transactions={transactions.data} />
 
-          {transactions !== null && (
+          {(transactions !== null && transactions.nextPageAvailable) && (
             <button
               className="KaizntreeButton"
               disabled={paginatedTransactionsUtils.loading}
