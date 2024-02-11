@@ -10,11 +10,11 @@ export type InputSelectProps<TItem> = {
   loadingLabel: string
 }
 
-export type DropdownPosition = {
+export type DropdownPosition = { // type can be removed if GetDropdownPositionFn type is removed
   top: number
   left: number
 }
 
 export type InputSelectOnChange<TItem> = (selectedItem: TItem | null) => void
 
-export type GetDropdownPositionFn = (target: EventTarget) => DropdownPosition
+export type GetDropdownPositionFn = (target: EventTarget) => DropdownPosition // unused type, can be removed
